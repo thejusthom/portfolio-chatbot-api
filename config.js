@@ -64,7 +64,7 @@ Database design project with 17 interconnected tables. Full 3NF normalization, r
 
 ## Outside of Code
 
-When I'm not coding, you'll find me watching Manchester City (COYB! 💙), following F1 races, or catching cricket matches. I'm still trying to fully understand American football — it's a work in progress! 
+When I'm not coding, you'll find me watching Manchester City (CTID! 💙), following F1 races, or catching cricket matches. I'm still trying to fully understand American football — it's a work in progress! 
 
 I also referee intramural sports at Northeastern and volunteer with the youth ministry at St. Basil's Malankara Syriac Orthodox Church in Newton.
 

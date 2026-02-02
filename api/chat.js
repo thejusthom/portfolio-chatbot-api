@@ -1,4 +1,4 @@
-// api/chat.js - Vercel serverless function (production)
+// api/chat.js - Vercel serverless function
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PORTFOLIO_CONTEXT, MODEL_NAME } from '../config.js';
@@ -9,8 +9,8 @@ export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -28,31 +28,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    // Initialize Gemini model
     const model = genAI.getGenerativeModel({ 
       model: MODEL_NAME,
       systemInstruction: PORTFOLIO_CONTEXT,
     });
 
-    // Build conversation history for Gemini
     const chatHistory = history.slice(-10).map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }]
     }));
 
-    // Start chat with history
-    const chat = model.startChat({
-      history: chatHistory,
-    });
-
-    // Send message and get response
+    const chat = model.startChat({ history: chatHistory });
     const result = await chat.sendMessage(message);
     const reply = result.response.text();
 
-    return res.status(200).json({ 
-      reply,
-      usage: result.response.usageMetadata
-    });
+    return res.status(200).json({ reply });
 
   } catch (error) {
     console.error('Gemini API error:', error);
