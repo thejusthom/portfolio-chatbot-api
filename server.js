@@ -34,7 +34,19 @@ app.post('/api/chat', async (req, res) => {
       systemInstruction: PORTFOLIO_CONTEXT,
     });
 
-    const chatHistory = history.slice(-10).map(m => ({
+    // Filter history: must start with 'user', alternate user/model
+    // Skip any leading assistant messages
+    let filteredHistory = history.slice(-10).filter(m => m.content && m.content.trim());
+    
+    // Find first user message index
+    const firstUserIndex = filteredHistory.findIndex(m => m.role === 'user');
+    if (firstUserIndex > 0) {
+      filteredHistory = filteredHistory.slice(firstUserIndex);
+    } else if (firstUserIndex === -1) {
+      filteredHistory = []; // No user messages, start fresh
+    }
+
+    const chatHistory = filteredHistory.map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }]
     }));
