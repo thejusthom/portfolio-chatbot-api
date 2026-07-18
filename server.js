@@ -5,7 +5,8 @@ import express from 'express';
 import cors from 'cors';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
-import { PORTFOLIO_CONTEXT, MODEL_NAME } from './config.js';
+import { buildSystemPrompt, MODEL_NAME, isLikelyRelevant, OFF_TOPIC_RESPONSE } from './config.js';
+import { retrieve, allChunks, buildQueryText } from './lib/retriever.js';
 
 dotenv.config();
 
@@ -29,9 +30,25 @@ app.post('/api/chat', async (req, res) => {
       return res.status(500).json({ error: 'GEMINI_API_KEY not set in .env' });
     }
 
-    const model = genAI.getGenerativeModel({ 
+    // Relevance pre-filter: skip Gemini entirely for clearly off-topic messages
+    if (!isLikelyRelevant(message)) {
+      return res.json({ reply: OFF_TOPIC_RESPONSE });
+    }
+
+    // RAG retrieval: embed the question, pick the most relevant knowledge chunks
+    let contextChunks;
+    let sources = null;
+    try {
+      contextChunks = await retrieve(buildQueryText(message, history));
+      sources = contextChunks.map(c => ({ id: c.id, score: +c.score.toFixed(3) }));
+    } catch (retrievalError) {
+      console.error('Retrieval failed, using full context:', retrievalError);
+      contextChunks = allChunks();
+    }
+
+    const model = genAI.getGenerativeModel({
       model: MODEL_NAME,
-      systemInstruction: PORTFOLIO_CONTEXT,
+      systemInstruction: buildSystemPrompt(contextChunks),
     });
 
     // Filter history: must start with 'user', alternate user/model
@@ -55,7 +72,7 @@ app.post('/api/chat', async (req, res) => {
     const result = await chat.sendMessage(message);
     const reply = result.response.text();
 
-    return res.json({ reply });
+    return res.json({ reply, sources });
 
   } catch (error) {
     console.error('Gemini API error:', error);

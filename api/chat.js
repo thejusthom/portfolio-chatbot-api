@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { PORTFOLIO_CONTEXT, MODEL_NAME, isLikelyRelevant, OFF_TOPIC_RESPONSE } from '../config.js';
+import { buildSystemPrompt, MODEL_NAME, isLikelyRelevant, OFF_TOPIC_RESPONSE } from '../config.js';
+import { retrieve, allChunks, buildQueryText } from '../lib/retriever.js';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -34,9 +35,24 @@ export default async function handler(req, res) {
     }
     // ==========================================
 
+    // ========== RAG retrieval ==========
+    // Embed the question, cosine-match it against the pre-computed knowledge
+    // chunks, and put only the top hits in the system prompt.
+    let contextChunks;
+    let sources = null;
+    try {
+      contextChunks = await retrieve(buildQueryText(message, history));
+      sources = contextChunks.map(c => ({ id: c.id, score: +c.score.toFixed(3) }));
+    } catch (retrievalError) {
+      // Embedding call failed — fall back to stuffing the whole knowledge base.
+      console.error('Retrieval failed, using full context:', retrievalError);
+      contextChunks = allChunks();
+    }
+    // ===================================
+
     const model = genAI.getGenerativeModel({
       model: MODEL_NAME,
-      systemInstruction: PORTFOLIO_CONTEXT,
+      systemInstruction: buildSystemPrompt(contextChunks),
     });
 
     // Filter history: ensure it starts with a user message (Gemini requirement)
@@ -52,7 +68,7 @@ export default async function handler(req, res) {
     const result = await chat.sendMessage(message);
     const reply = result.response.text();
 
-    return res.status(200).json({ reply });
+    return res.status(200).json({ reply, sources });
 
   } catch (error) {
     console.error('Gemini API error:', error);
