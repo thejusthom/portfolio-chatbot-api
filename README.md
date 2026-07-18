@@ -125,11 +125,16 @@ If you have Google One AI Premium, you get even higher limits.
 
 ### Update Your Info
 
-Edit the `PORTFOLIO_CONTEXT` in `api/chat.js` to update:
-- Work experience
-- Skills
-- Projects
-- Contact info
+Facts live in `knowledge/*.md` (experience, projects, skills, education, personal, contact).
+After editing them, regenerate the vector store and commit both:
+
+```bash
+npm run embed
+git add knowledge data/embeddings.js
+```
+
+Persona, scope rules, and the keyword pre-filter live in `config.js`.
+See `Local-dev.MD` for how the RAG pipeline works.
 
 ### Change Model
 

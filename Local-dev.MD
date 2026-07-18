@@ -67,6 +67,32 @@ Now the chat widget will talk to your local API!
 
 Both use the same logic, just different frameworks. When you deploy to Vercel via GitHub, it automatically uses the serverless function.
 
+## RAG Pipeline
+
+The bot's knowledge is no longer one giant system prompt — it's retrieved per-question:
+
+1. **Knowledge base** — facts live in `knowledge/*.md`, one `## section` = one chunk
+2. **Ingestion** — `npm run embed` chunks the files, embeds each chunk with
+   `gemini-embedding-001` (768 dims, normalized), and writes `data/embeddings.js`
+3. **Retrieval** — at request time, `lib/retriever.js` embeds the question
+   (plus the previous user turn, for follow-ups), scores every chunk by cosine
+   similarity, and picks the top 4
+4. **Generation** — `config.js#buildSystemPrompt()` combines the persona/scope
+   rules with only the retrieved chunks; responses include a `sources` array
+   with chunk ids + similarity scores for debugging
+
+**Editing the bot's knowledge:**
+```bash
+# 1. Edit the markdown in knowledge/
+# 2. Regenerate the vector store
+npm run embed
+# 3. Commit BOTH knowledge/ and data/embeddings.js, then push
+#    (Vercel bundles data/embeddings.js — ingestion does not run at deploy time)
+```
+
+If the embedding call fails at request time, the API falls back to stuffing
+all chunks into the prompt (same behavior as the pre-RAG version).
+
 ---
 
 ## Common Issues
