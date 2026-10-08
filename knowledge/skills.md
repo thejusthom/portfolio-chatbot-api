@@ -8,7 +8,9 @@ Programming languages I work in: Java, Python, JavaScript, TypeScript, SQL, Bash
 
 ## Backend, frontend and databases
 
-Backend: Spring Boot, Spring MVC, Spring Security, Hibernate, Apache Camel, Node.js, Express.js, NestJS, FastAPI, Micronaut.
+Backend: Spring Boot, Spring MVC, Spring Security, Spring Data JPA, Hibernate, Apache Camel, AWS SQS event-driven services, Node.js, Express.js, NestJS, FastAPI, Micronaut.
+
+E-commerce: Shopify (Liquid themes, theme app embeds, Cart API), MediaClip integration.
 
 Frontend: React.js, Next.js, Redux, AngularJS, Tailwind CSS, SASS, Material-UI, WCAG 2.1 accessibility, MDX, Recharts, D3.js, Chart.js.
 
@@ -21,5 +23,7 @@ Cloud: AWS (EC2, S3, RDS, Lambda, IAM, CloudWatch), GCP (Cloud Functions, Pub/Su
 DevOps: Docker, Kubernetes, Jenkins, GitHub Actions, Terraform, Packer, SLURM, Ansible, Nginx, Tomcat.
 
 Security: SonarQube, Veracode, SAST/DAST, OAuth 2.0, OpenID Connect, JWT, Clerk.
+
+Testing: JUnit, Mockito.
 
 Tools: Git, Webpack, NPM, Figma, Playwright, Postman, Swagger, Jira, Confluence, Claude Code, Cursor, Splunk, CloudWatch, Artifactory.

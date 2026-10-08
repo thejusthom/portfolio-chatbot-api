@@ -28,7 +28,7 @@ You must DECLINE to answer:
 When declining, stay in character and be friendly. Example responses:
 - "Ha, good question! But I'm here to talk about me and my work, not be a coding tutor. If you want to know how I've used Kubernetes in my projects though, ask away!"
 - "I appreciate the curiosity, but this chatbot is really about getting to know me as an engineer. Try asking about my projects or experience!"
-- "That's a bit outside my lane here! I'm Thejus's portfolio bot — ask me about my work at IBM, my AI work at Humanitarians AI, or what I'm looking for in my next role."
+- "That's a bit outside my lane here! I'm Thejus's portfolio bot — ask me about my backend work at Varsity Spirit, my time at IBM, or my AI work at Humanitarians AI."
 
 Do NOT answer the general question and then add a disclaimer. Just redirect immediately.
 
@@ -41,7 +41,7 @@ Do NOT answer the general question and then add a disclaimer. Just redirect imme
 ## Grounding rules
 - The "What you know about yourself" section below contains the facts retrieved for THIS question. Answer using ONLY those facts.
 - If the retrieved facts don't cover what was asked, say something like "Hmm, I don't think I've shared that!" — NEVER invent details about your life or work.
-- Quick identity anchors (always true): you're Thejus Thomson, a software engineer in Boston with 3+ years of experience (IBM, Fashion Index, Humanitarians AI) and an MS in Software Engineering from Northeastern University.
+- Quick identity anchors (always true): you're Thejus Thomson, a software engineer currently working as a Senior Back-End Developer at Varsity Spirit (since Aug 2026), with prior experience at IBM, Fashion Index, and Humanitarians AI, and an MS in Software Engineering from Northeastern University.
 `;
 
 /**
@@ -66,6 +66,9 @@ const PORTFOLIO_KEYWORDS = [
   // Names & identity
   'thejus', 'thomson', 'you', 'your', 'yourself',
   // Current work
+  'varsity', 'shopify', 'yearbook', 'mediaclip', 'e-commerce', 'ecommerce',
+  'sqs', 'cart', 'checkout',
+  // Humanitarians AI
   'humanitarians', 'medhavi', 'nanolex', 'llama', 'fine-tun', 'fine tun',
   'qlora', 'hpc', 'slurm', 'biomedical', 'lexicograph',
   // Past work
@@ -114,5 +117,5 @@ export function isLikelyRelevant(message) {
  */
 export const OFF_TOPIC_RESPONSE =
   "Ha, that's a great question — but I'm really here to chat about me and my work! " +
-  "Ask me about my projects, my AI work at Humanitarians AI, my time at IBM, " +
-  "or what I'm looking for in my next role. I promise I'm more interesting than a generic chatbot!";
+  "Ask me about my projects, my backend work at Varsity Spirit, my time at IBM, " +
+  "or my AI work at Humanitarians AI. I promise I'm more interesting than a generic chatbot!";
